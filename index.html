@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تشغيل أكواد HTML - أحمد زيكو</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f4f4f9;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .dark-mode {
+            background-color: #2b2b2b;
+            color: #f1f1f1;
+        }
+        .container {
+            margin-top: 50px;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+            max-width: 900px;
+            margin: auto;
+        }
+        .dark-mode .container {
+            background-color: #3a3a3a;
+        }
+        textarea {
+            width: 100%;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 2px solid #007bff;
+            padding: 10px;
+            height: 200px;
+            font-family: 'Courier New', monospace;
+        }
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        footer {
+            margin-top: 20px;
+            text-align: center;
+            padding: 10px 0;
+        }
+        .social-icons a {
+            color: #007bff;
+            margin: 0 5px;
+            transition: color 0.3s;
+        }
+        .social-icons a:hover {
+            color: #0056b3;
+        }
+        .toggle-mode {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            cursor: pointer;
+            font-size: 24px;
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s;
+        }
+        .toggle-mode:hover {
+            transform: scale(1.1);
+        }
+        .alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: none;
+        }
+        .support-message {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .music-button {
+            margin-top: 15px;
+            padding: 12px 25px;
+        }
+        #telegram-alert {
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+            color: #0c5460;
+            display: none;
+        }
+        .palestine-support {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .palestine-support img {
+            width: 100px; /* حجم العلم */
+            height: auto;
+        }
+        .palestine-support h4 {
+            margin-top: 10px;
+            font-size: 24px; /* حجم الخط */
+            font-weight: bold; /* جعل الخط عريض */
+            color: #dc3545; /* لون جاذب */
+        }
+        .palestine-support p {
+            font-size: 18px;
+            color: #6c757d; /* لون رمادي جذاب */
+        }
+        /* تحسين شكل الشريط العلوي */
+        .navbar {
+            margin-bottom: 20px;
+            background-color: #007bff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s;
+        }
+        .navbar a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        .navbar a:hover {
+            text-decoration: underline;
+            color: #d1ecf1;
+        }
+        .nav-item {
+            position: relative;
+        }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        .nav-item:hover .dropdown-menu {
+            display: block;
+        }
+        .dropdown-item {
+            padding: 10px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .dropdown-item:hover {
+            background: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+    <div class="alert alert-info alert-dismissible fade show" role="alert" id="telegram-alert">
+        اشترك في قناتنا على تيليجرام لكل جديد! <a href="https://t.me/tbtgt" class="btn btn-link">اذهب إلى القناة</a>
+        <button type="button" class="btn-close" onclick="closeAlert()"></button>
+    </div>
+
+    <nav class="navbar">
+        <a href="#output">المعاينة</a>
+        <a href="#support">دعم القضية</a>
+        <a href="#music">الموسيقى</a>
+    </nav>
+
+    <div class="container">
+        <h1 class="text-center">htmlموقع تجربة اكواد </h1>
+        <form method="post" id="editor" onsubmit="return runCode();">
+            <textarea id="code-editor" name="code" placeholder="اكتب كود HTML هنا..." rows="10"></textarea>
+            <button type="submit" class="btn btn-primary">تشغيل الكود</button>
+            <button type="button" onclick="downloadCode()" class="btn btn-secondary">تنزيل الكود كملف</button>
+        </form>
+        <div class="output mt-4" id="output">
+            <!-- سيتم عرض الناتج هنا -->
+        </div>
+        <div class="social-share mt-4">
+            <h5>شارك الكود الخاص بك:</h5>
+            <button class="btn btn-outline-primary" onclick="shareOnTelegram()">تيليجرام</button>
+            <button class="btn btn-outline-success" onclick="shareOnFile()">مشاركة كملف</button>
+        </div>
+
+        <!-- رسالة دعم فلسطين -->
+        <div class="palestine-support" id="support">
+            <img src="https://flagcdn.com/w320/ps.png" alt="علم فلسطين">
+            <h4>ادعم القضية!</h4>
+            <p>تضامنوا مع إخواننا وأخواتنا في فلسطين، دعمكم مهم.</p>
+        </div>
+
+        <!-- زر تشغيل الموسيقى -->
+        <button class="music-button btn btn-danger" id="music" onclick="toggleMusic()">تشغيل/إيقاف الموسيقى الدينية</button>
+    </div>
+    <footer>
+        <p>تم برمجته بواسطة : <strong>أحمد زيكو</strong></p>
+        <div class="social-icons">
+            <a href="https://www.facebook.com/AHMEDZEKO1O?mibextid=kFxxJD"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://www.tiktok.com/@ahmedzeko1_1?_t=8r8TkAPwpiR&_r=1"><i class="fab fa-tiktok"></i></a>
+            <a href="https://www.instagram.com/ahmedzeko1/"><i class="fab fa-instagram"></i></a>
+            <a href="https://t.me/pvppz"><i class="fab fa-telegram"></i></a>
+        </div>
+    </footer>
+    
+    <div class="toggle-mode" id="toggleModeButton">
+        <i class="fa-solid fa-moon"></i>
+    </div>
+
+    <script>
+        function runCode() {
+            var code = document.getElementById('code-editor').value;
+            var output = document.getElementById('output');
+            output.innerHTML = code;
+            return false; // Prevent form submission
+        }
+
+        function downloadCode() {
+            var code = document.getElementById('code-editor').value;
+            var blob = new Blob([code], { type: "text/html" });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement("a");
+            a.href = url;
+            a.download = "code.html";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        function shareOnTelegram() {
+            var code = document.getElementById('code-editor').value;
+            var encodedCode = encodeURIComponent(code);
+            var telegramUrl = `https://t.me/share/url?url=${encodedCode}&text=إليك%20كود%20HTML%20الخاص%20بي!`;
+            window.open(telegramUrl, '_blank');
+        }
+
+        function shareOnFile() {
+            var code = document.getElementById('code-editor').value;
+            var blob = new Blob([code], { type: "text/html" });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement("a");
+            a.href = url;
+            a.download = "code.html";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        var isMusicPlaying = false;
+        var audio = new Audio('zeko.mp3');
+
+        function toggleMusic() {
+            if (isMusicPlaying) {
+                audio.pause();
+            } else {
+                audio.play();
+            }
+            isMusicPlaying = !isMusicPlaying;
+        }
+
+        var toggleModeButton = document.getElementById('toggleModeButton');
+        toggleModeButton.addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            document.querySelector('.container').classList.toggle('dark-mode');
+            var icon = toggleModeButton.querySelector('i');
+            icon.classList.toggle('fa-moon');
+            icon.classList.toggle('fa-sun');
+        });
+
+        function closeAlert() {
+            document.getElementById('telegram-alert').style.display = 'none';
+        }
+
+        // ظهور رسالة دعم فلسطين
+        document.getElementById('support').style.display = 'block';
+        // ظهور رسالة الاشتراك في تيليجرام
+        document.getElementById('telegram-alert').style.display = 'block';
+    </script>
+</body>
+</html>
